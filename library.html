@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم کتابداری مدرسه</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .main-container {
+            display: none;
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+        .sidebar a.active {
+            background-color: #3498db;
+        }
+        .content {
+            padding: 20px;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .btn-action {
+            margin: 0 2px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+        }
+        .student-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- صفحه ورود -->
+    <div id="login-page" class="login-container">
+        <h2 class="text-center mb-4">ورود به سیستم کتابداری</h2>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">نام کاربری</label>
+                <input type="text" class="form-control" id="username" value="admin" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">رمز عبور</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">ورود</button>
+        </form>
+    </div>
+
+    <!-- صفحه اصلی -->
+    <div id="main-page" class="main-container">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- نوار کناری -->
+                <div class="col-md-3 col-lg-2 sidebar">
+                    <h4 class="text-center mb-4">سیستم کتابداری</h4>
+                    <a href="#" class="active" data-section="students-section">
+                        <i class="bi bi-people-fill"></i> مدیریت دانش آموزان
+                    </a>
+                    <a href="#" data-section="borrow-section">
+                        <i class="bi bi-book"></i> امانت کتاب
+                    </a>
+                    <a href="#" data-section="return-section">
+                        <i class="bi bi-arrow-return-left"></i> برگشت کتاب
+                    </a>
+                    <a href="#" data-section="banned-section">
+                        <i class="bi bi-person-x-fill"></i> لیست محرومین
+                    </a>
+                    <a href="#" data-section="all-info-section">
+                        <i class="bi bi-info-circle"></i> مشاهده همه اطلاعات
+                    </a>
+                    <a href="#" id="logout-btn" class="mt-5">
+                        <i class="bi bi-box-arrow-left"></i> خروج
+                    </a>
+                </div>
+
+                <!-- محتوای اصلی -->
+                <div class="col-md-9 col-lg-10 content">
+                    <!-- بخش مدیریت دانش آموزان -->
+                    <div id="students-section" class="section active">
+                        <h3>مدیریت دانش آموزان</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ثبت دانش آموز جدید
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="add-student-form">
+                                            <div class="form-group">
+                                                <label for="student-name">نام و نام خانوادگی</label>
+                                                <input type="text" class="form-control" id="student-name" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="student-class">کلاس</label>
+                                                <select class="form-control" id="student-class" required>
+                                                    <option value="">انتخاب کنید</option>
+                                                    <option value="هفتم 1">هفتم 1</option>
+                                                    <option value="هفتم 2">هفتم 2</option>
+                                                    <option value="هشتم 1">هشتم 1</option>
+                                                    <option value="هشتم 2">هشتم 2</option>
+                                                    <option value="نهم 1">نهم 1</option>
+                                                    <option value="نهم 2">نهم 2</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="student-id">کد دانش آموزی</label>
+                                                <input type="text" class="form-control" id="student-id" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-success">ثبت دانش آموز</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        لیست دانش آموزان
+                                    </div>
+                                    <div class="card-body student-list">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>نام</th>
+                                                    <th>کلاس</th>
+                                                    <th>کد دانش آموزی</th>
+                                                    <th>عملیات</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="students-table-body">
+                                                <!-- دانش آموزان اینجا نمایش داده می شوند -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش امانت کتاب -->
+                    <div id="borrow-section" class="section">
+                        <h3>امانت دادن کتاب</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ثبت امانت کتاب
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="borrow-book-form">
+                                            <div class="form-group">
+                                                <label for="borrow-student">انتخاب دانش آموز</label>
+                                                <select class="form-control" id="borrow-student" required>
+                                                    <option value="">انتخاب کنید</option>
+                                                    <!-- دانش آموزان اینجا بارگذاری می شوند -->
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="book-name">نام کتاب</label>
+                                                <input type="text" class="form-control" id="book-name" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="book-code">کد کتاب</label>
+                                                <input type="text" class="form-control" id="book-code" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">ثبت امانت</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        کتاب های امانت داده شده
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>دانش آموز</th>
+                                                    <th>کتاب</th>
+                                                    <th>کد کتاب</th>
+                                                    <th>تاریخ امانت</th>
+                                                    <th>مهلت بازگشت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="borrowed-books-table-body">
+                                                <!-- کتاب های امانت داده شده اینجا نمایش داده می شوند -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش برگشت کتاب -->
+                    <div id="return-section" class="section">
+                        <h3>برگشت کتاب</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ثبت برگشت کتاب
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="return-book-form">
+                                            <div class="form-group">
+                                                <label for="return-book">انتخاب کتاب برای برگشت</label>
+                                                <select class="form-control" id="return-book" required>
+                                                    <option value="">انتخاب کنید</option>
+                                                    <!-- کتاب های امانت داده شده اینجا بارگذاری می شوند -->
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-success">ثبت برگشت</button>
+                                            <button type="button" id="manual-ban-btn" class="btn btn-warning">محرومیت دستی</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        تاریخچه امانت و برگشت
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>دانش آموز</th>
+                                                    <th>کتاب</th>
+                                                    <th>تاریخ امانت</th>
+                                                    <th>تاریخ برگشت</th>
+                                                    <th>وضعیت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="history-table-body">
+                                                <!-- تاریخچه اینجا نمایش داده می شود -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش لیست محرومین -->
+                    <div id="banned-section" class="section">
+                        <h3>لیست دانش آموزان محروم</h3>
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>نام دانش آموز</th>
+                                            <th>کلاس</th>
+                                            <th>کد دانش آموزی</th>
+                                            <th>تاریخ محرومیت</th>
+                                            <th>پایان محرومیت</th>
+                                            <th>علت محرومیت</th>
+                                            <th>عملیات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="banned-table-body">
+                                        <!-- محرومین اینجا نمایش داده می شوند -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش مشاهده همه اطلاعات -->
+                    <div id="all-info-section" class="section">
+                        <h3>همه اطلاعات سیستم</h3>
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" id="infoTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students-tab-pane" type="button" role="tab">دانش آموزان</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="books-tab" data-bs-toggle="tab" data-bs-target="#books-tab-pane" type="button" role="tab">کتاب ها</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions-tab-pane" type="button" role="tab">تراکنش ها</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content mt-3" id="infoTabsContent">
+                                    <div class="tab-pane fade show active" id="students-tab-pane" role="tabpanel">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>نام</th>
+                                                    <th>کلاس</th>
+                                                    <th>کد دانش آموزی</th>
+                                                    <th>تعداد کتاب های امانتی</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="all-students-table-body">
+                                                <!-- همه دانش آموزان اینجا نمایش داده می شوند -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane fade" id="books-tab-pane" role="tabpanel">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>نام کتاب</th>
+                                                    <th>کد کتاب</th>
+                                                    <th>وضعیت</th>
+                                                    <th>دانش آموز امانت گیرنده</th>
+                                                    <th>تاریخ امانت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="all-books-table-body">
+                                                <!-- همه کتاب ها اینجا نمایش داده می شوند -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane fade" id="transactions-tab-pane" role="tabpanel">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>دانش آموز</th>
+                                                    <th>کتاب</th>
+                                                    <th>تاریخ امانت</th>
+                                                    <th>تاریخ برگشت</th>
+                                                    <th>وضعیت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="all-transactions-table-body">
+                                                <!-- همه تراکنش ها اینجا نمایش داده می شوند -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- اعلان ها -->
+    <div id="alert" class="alert alert-custom alert-dismissible fade show" role="alert">
+        <span id="alert-message"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- مودال محرومیت دستی -->
+    <div class="modal fade" id="manualBanModal" tabindex="-1" aria-labelledby="manualBanModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="manualBanModalLabel">محرومیت دستی دانش آموز</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="manual-ban-form">
+                        <div class="form-group">
+                            <label for="ban-student">انتخاب دانش آموز</label>
+                            <select class="form-control" id="ban-student" required>
+                                <option value="">انتخاب کنید</option>
+                                <!-- دانش آموزان اینجا بارگذاری می شوند -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ban-reason">علت محرومیت</label>
+                            <input type="text" class="form-control" id="ban-reason" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ban-duration">مدت محرومیت (روز)</label>
+                            <input type="number" class="form-control" id="ban-duration" value="14" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">لغو</button>
+                    <button type="button" class="btn btn-warning" id="confirm-manual-ban">اعمال محرومیت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // داده های نمونه برای تست برنامه
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let books = JSON.parse(localStorage.getItem('books')) || [];
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let bannedStudents = JSON.parse(localStorage.getItem('bannedStudents')) || [];
+
+        // ذخیره داده ها در localStorage
+        function saveData() {
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('books', JSON.stringify(books));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            localStorage.setItem('bannedStudents', JSON.stringify(bannedStudents));
+        }
+
+        // نمایش اعلان
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            const alertMessage = document.getElementById('alert-message');
+            
+            alert.className = `alert alert-custom alert-${type} alert-dismissible fade show`;
+            alertMessage.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // فرم ورود
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'm_1434') {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-page').style.display = 'block';
+                loadAllData();
+            } else {
+                showAlert('نام کاربری یا رمز عبور اشتباه است', 'danger');
+            }
+        });
+
+        // دکمه خروج
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            document.getElementById('login-page').style.display = 'block';
+            document.getElementById('main-page').style.display = 'none';
+        });
+
+        // تغییر بخش ها در نوار کناری
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // حذف کلاس active از همه لینک ها
+                document.querySelectorAll('.sidebar a').forEach(a => {
+                    a.classList.remove('active');
+                });
+                
+                // اضافه کردن کلاس active به لینک کلیک شده
+                this.classList.add('active');
+                
+                // مخفی کردن همه بخش ها
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // نمایش بخش مربوطه
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // فرم ثبت دانش آموز
+        document.getElementById('add-student-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('student-name').value;
+            const studentClass = document.getElementById('student-class').value;
+            const studentId = document.getElementById('student-id').value;
+            
+            // بررسی تکراری نبودن کد دانش آموزی
+            if (students.some(student => student.id === studentId)) {
+                showAlert('کد دانش آموزی تکراری است', 'danger');
+                return;
+            }
+            
+            const newStudent = {
+                id: studentId,
+                name: name,
+                class: studentClass
+            };
+            
+            students.push(newStudent);
+            saveData();
+            loadAllData();
+            this.reset();
+            
+            showAlert('دانش آموز با موفقیت ثبت شد');
+        });
+
+        // حذف دانش آموز
+        function deleteStudent(studentId) {
+            if (confirm('آیا از حذف این دانش آموز اطمینان دارید؟')) {
+                students = students.filter(student => student.id !== studentId);
+                saveData();
+                loadAllData();
+                showAlert('دانش آموز با موفقیت حذف شد');
+            }
+        }
+
+        // فرم امانت کتاب
+        document.getElementById('borrow-book-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentId = document.getElementById('borrow-student').value;
+            const bookName = document.getElementById('book-name').value;
+            const bookCode = document.getElementById('book-code').value;
+            
+            const student = students.find(s => s.id === studentId);
+            
+            // بررسی محرومیت دانش آموز
+            const isBanned = bannedStudents.some(ban => 
+                ban.studentId === studentId && new Date(ban.endDate) > new Date()
+            );
+            
+            if (isBanned) {
+                showAlert('این دانش آموز در حال حاضر محروم است', 'danger');
+                return;
+            }
+            
+            // بررسی تعداد کتاب های امانتی دانش آموز (حداکثر 2 کتاب)
+            const borrowedBooks = transactions.filter(t => 
+                t.studentId === studentId && t.returnDate === null
+            );
+            
+            if (borrowedBooks.length >= 2) {
+                showAlert('این دانش آموز در حال حاضر 2 کتاب امانت دارد', 'danger');
+                return;
+            }
+            
+            const newBook = {
+                code: bookCode,
+                name: bookName,
+                status: 'borrowed'
+            };
+            
+            // اگر کتاب قبلاً وجود نداشته باشد، اضافه می‌شود
+            if (!books.some(book => book.code === bookCode)) {
+                books.push(newBook);
+            }
+            
+            const newTransaction = {
+                id: Date.now(),
+                studentId: studentId,
+                bookCode: bookCode,
+                borrowDate: new Date().toLocaleDateString('fa-IR'),
+                dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('fa-IR'),
+                returnDate: null
+            };
+            
+            transactions.push(newTransaction);
+            saveData();
+            loadAllData();
+            this.reset();
+            
+            showAlert('کتاب با موفقیت به امانت داده شد');
+        });
+
+        // فرم برگشت کتاب
+        document.getElementById('return-book-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const transactionId = parseInt(document.getElementById('return-book').value);
+            const transaction = transactions.find(t => t.id === transactionId);
+            
+            if (transaction) {
+                transaction.returnDate = new Date().toLocaleDateString('fa-IR');
+                
+                // بررسی دیرکرد در بازگشت کتاب
+                const dueDate = new Date(transaction.dueDate.replace(/-/g, '/'));
+                const returnDate = new Date();
+                
+                if (returnDate > dueDate) {
+                    // محرومیت 2 هفته ای برای دیرکرد
+                    const banEndDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+                    
+                    const newBan = {
+                        studentId: transaction.studentId,
+                        startDate: new Date().toLocaleDateString('fa-IR'),
+                        endDate: banEndDate.toLocaleDateString('fa-IR'),
+                        reason: 'دیرکرد در بازگشت کتاب'
+                    };
+                    
+                    bannedStudents.push(newBan);
+                    showAlert('کتاب با موفقیت برگشت داده شد. دانش آموز به علت دیرکرد به مدت 2 هفته محروم شد.', 'warning');
+                } else {
+                    showAlert('کتاب با موفقیت برگشت داده شد');
+                }
+                
+                saveData();
+                loadAllData();
+                this.reset();
+            }
+        });
+
+        // محرومیت دستی
+        document.getElementById('manual-ban-btn').addEventListener('click', function() {
+            // پر کردن dropdown دانش آموزان
+            const banStudentSelect = document.getElementById('ban-student');
+            banStudentSelect.innerHTML = '<option value="">انتخاب کنید</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.name} - ${student.class}`;
+                banStudentSelect.appendChild(option);
+            });
+            
+            // نمایش مودال
+            const modal = new bootstrap.Modal(document.getElementById('manualBanModal'));
+            modal.show();
+        });
+
+        // تایید محرومیت دستی
+        document.getElementById('confirm-manual-ban').addEventListener('click', function() {
+            const studentId = document.getElementById('ban-student').value;
+            const reason = document.getElementById('ban-reason').value;
+            const duration = parseInt(document.getElementById('ban-duration').value);
+            
+            if (!studentId || !reason) {
+                showAlert('لطفاً همه فیلدها را پر کنید', 'danger');
+                return;
+            }
+            
+            const banEndDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000);
+            
+            const newBan = {
+                studentId: studentId,
+                startDate: new Date().toLocaleDateString('fa-IR'),
+                endDate: banEndDate.toLocaleDateString('fa-IR'),
+                reason: reason
+            };
+            
+            bannedStudents.push(newBan);
+            saveData();
+            loadAllData();
+            
+            // بستن مودال
+            const modal = bootstrap.Modal.getInstance(document.getElementById('manualBanModal'));
+            modal.hide();
+            
+            showAlert('محرومیت با موفقیت اعمال شد');
+        });
+
+        // بارگذاری همه داده ها
+        function loadAllData() {
+            loadStudents();
+            loadBorrowDropdowns();
+            loadBorrowedBooks();
+            loadReturnDropdown();
+            loadHistory();
+            loadBannedStudents();
+            loadAllInfo();
+        }
+
+        // بارگذاری لیست دانش آموزان
+        function loadStudents() {
+            const tableBody = document.getElementById('students-table-body');
+            tableBody.innerHTML = '';
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td>${student.id}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${student.id}')">حذف</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // بارگذاری dropdown های مربوط به امانت
+        function loadBorrowDropdowns() {
+            const borrowStudentSelect = document.getElementById('borrow-student');
+            borrowStudentSelect.innerHTML = '<option value="">انتخاب کنید</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.name} - ${student.class}`;
+                borrowStudentSelect.appendChild(option);
+            });
+        }
+
+        // بارگذاری کتاب های امانت داده شده
+        function loadBorrowedBooks() {
+            const tableBody = document.getElementById('borrowed-books-table-body');
+            tableBody.innerHTML = '';
+            
+            const borrowedTransactions = transactions.filter(t => t.returnDate === null);
+            
+            borrowedTransactions.forEach(transaction => {
+                const student = students.find(s => s.id === transaction.studentId);
+                const book = books.find(b => b.code === transaction.bookCode);
+                
+                if (student && book) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name} (${student.class})</td>
+                        <td>${book.name}</td>
+                        <td>${book.code}</td>
+                        <td>${transaction.borrowDate}</td>
+                        <td>${transaction.dueDate}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        // بارگذاری dropdown برگشت کتاب
+        function loadReturnDropdown() {
+            const returnBookSelect = document.getElementById('return-book');
+            returnBookSelect.innerHTML = '<option value="">انتخاب کنید</option>';
+            
+            const borrowedTransactions = transactions.filter(t => t.returnDate === null);
+            
+            borrowedTransactions.forEach(transaction => {
+                const student = students.find(s => s.id === transaction.studentId);
+                const book = books.find(b => b.code === transaction.bookCode);
+                
+                if (student && book) {
+                    const option = document.createElement('option');
+                    option.value = transaction.id;
+                    option.textContent = `${student.name} - ${book.name} (${book.code})`;
+                    returnBookSelect.appendChild(option);
+                }
+            });
+        }
+
+        // بارگذاری تاریخچه
+        function loadHistory() {
+            const tableBody = document.getElementById('history-table-body');
+            tableBody.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const student = students.find(s => s.id === transaction.studentId);
+                const book = books.find(b => b.code === transaction.bookCode);
+                
+                if (student && book) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name} (${student.class})</td>
+                        <td>${book.name}</td>
+                        <td>${transaction.borrowDate}</td>
+                        <td>${transaction.returnDate || 'برنگشته'}</td>
+                        <td>${transaction.returnDate ? 'برگشت داده شده' : 'در امانت'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        // بارگذاری لیست محرومین
+        function loadBannedStudents() {
+            const tableBody = document.getElementById('banned-table-body');
+            tableBody.innerHTML = '';
+            
+            bannedStudents.forEach(ban => {
+                const student = students.find(s => s.id === ban.studentId);
+                
+                if (student) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${student.id}</td>
+                        <td>${ban.startDate}</td>
+                        <td>${ban.endDate}</td>
+                        <td>${ban.reason}</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="removeBan('${ban.studentId}')">رفع محرومیت</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        // رفع محرومیت
+        function removeBan(studentId) {
+            bannedStudents = bannedStudents.filter(ban => ban.studentId !== studentId);
+            saveData();
+            loadAllData();
+            showAlert('محرومیت با موفقیت رفع شد');
+        }
+
+        // بارگذاری همه اطلاعات
+        function loadAllInfo() {
+            // بارگذاری اطلاعات دانش آموزان
+            const allStudentsTableBody = document.getElementById('all-students-table-body');
+            allStudentsTableBody.innerHTML = '';
+            
+            students.forEach(student => {
+                const borrowedCount = transactions.filter(t => 
+                    t.studentId === student.id && t.returnDate === null
+                ).length;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td>${student.id}</td>
+                    <td>${borrowedCount}</td>
+                `;
+                allStudentsTableBody.appendChild(row);
+            });
+            
+            // بارگذاری اطلاعات کتاب ها
+            const allBooksTableBody = document.getElementById('all-books-table-body');
+            allBooksTableBody.innerHTML = '';
+            
+            books.forEach(book => {
+                const borrowedTransaction = transactions.find(t => 
+                    t.bookCode === book.code && t.returnDate === null
+                );
+                
+                let status = 'موجود';
+                let borrower = '-';
+                let borrowDate = '-';
+                
+                if (borrowedTransaction) {
+                    status = 'امانت داده شده';
+                    const student = students.find(s => s.id === borrowedTransaction.studentId);
+                    borrower = student ? `${student.name} (${student.class})` : 'نامشخص';
+                    borrowDate = borrowedTransaction.borrowDate;
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.name}</td>
+                    <td>${book.code}</td>
+                    <td>${status}</td>
+                    <td>${borrower}</td>
+                    <td>${borrowDate}</td>
+                `;
+                allBooksTableBody.appendChild(row);
+            });
+            
+            // بارگذاری اطلاعات تراکنش ها
+            const allTransactionsTableBody = document.getElementById('all-transactions-table-body');
+            allTransactionsTableBody.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const student = students.find(s => s.id === transaction.studentId);
+                const book = books.find(b => b.code === transaction.bookCode);
+                
+                if (student && book) {
+                    const status = transaction.returnDate ? 'برگشت داده شده' : 'در امانت';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name} (${student.class})</td>
+                        <td>${book.name}</td>
+                        <td>${transaction.borrowDate}</td>
+                        <td>${transaction.returnDate || '-'}</td>
+                        <td>${status}</td>
+                    `;
+                    allTransactionsTableBody.appendChild(row);
+                }
+            });
+        }
+
+        // بارگذاری اولیه داده ها
+        if (students.length === 0) {
+            // داده های نمونه برای تست
+            students = [
+                { id: '1001', name: 'علی محمدی', class: 'هفتم 1' },
+                { id: '1002', name: 'فاطمه احمدی', class: 'هفتم 2' },
+                { id: '1003', name: 'محمد حسینی', class: 'هشتم 1' }
+            ];
+            
+            books = [
+                { code: 'B001', name: 'ریاضی هفتم', status: 'available' },
+                { code: 'B002', name: 'علوم هشتم', status: 'available' },
+                { code: 'B003', name: 'ادبیات نهم', status: 'available' }
+            ];
+            
+            saveData();
+        }
+    </script>
+</body>
+</html>
